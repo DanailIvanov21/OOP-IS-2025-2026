@@ -1,7 +1,6 @@
 #pragma once
 #include <iostream>
 #include <stdexcept>
-#include <cmath>
 
 class Nvector {
 private:
@@ -9,7 +8,7 @@ private:
     size_t size;
 
     void freeDynamic();
-    void copyDynamic(const Nvector& other);
+    int* copyDynamic(const Nvector& other) const;
 
 public:
     Nvector();
@@ -18,16 +17,14 @@ public:
     Nvector& operator=(const Nvector& other);
     ~Nvector();
 
-    size_t getSize() const;
+    size_t length() const;     
+    size_t getSize() const;    
     int& operator[](size_t index);
     const int& operator[](size_t index) const;
 
     Nvector& operator+=(const Nvector& other);
     Nvector& operator-=(const Nvector& other);
-
     Nvector& operator*=(int scalar);
-
-    double length() const;
 
     bool isParallel(const Nvector& other) const;
     bool isPerpendicular(const Nvector& other) const;
