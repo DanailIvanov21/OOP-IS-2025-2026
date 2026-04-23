@@ -30,7 +30,7 @@ Nvector::Nvector(const Nvector& other) : data(nullptr), size(other.size) {
 
 Nvector& Nvector::operator=(const Nvector& other) {
     if (this != &other) {
-        int* newData = copyDynamic(other);  // strong guarantee
+        int* newData = copyDynamic(other);  
 
         freeDynamic();
         data = newData;
@@ -48,7 +48,7 @@ size_t Nvector::getSize() const {
 }
 
 size_t Nvector::length() const {
-    return size; // дължина = брой елементи
+    return size; 
 }
 
 int& Nvector::operator[](size_t index) {
@@ -67,7 +67,7 @@ Nvector& Nvector::operator+=(const Nvector& other) {
     if (size != other.size)
         throw std::invalid_argument("Vector sizes must match");
 
-    int* newData = new int[size]; // strong guarantee
+    int* newData = new int[size]; 
 
     for (size_t i = 0; i < size; i++)
         newData[i] = data[i] + other.data[i];
