@@ -17,7 +17,7 @@ public:
     Nvector& operator=(const Nvector& other);
     ~Nvector();
 
-    size_t length() const;     
+    size_t length() const;  // or operator~()
     size_t getSize() const;    
     int& operator[](size_t index);
     const int& operator[](size_t index) const;
