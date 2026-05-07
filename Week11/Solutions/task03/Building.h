@@ -13,9 +13,9 @@ public:
     Building(int h, double a, const MyString& addr);
 
     
-    Building(const Building& other) = default;
-    Building& operator=(const Building& other) = default;
-    ~Building() = default;
+    //Building(const Building& other) = default;
+    //Building& operator=(const Building& other) = default;
+   // ~Building() = default;
 
     
     int getHeight() const;
