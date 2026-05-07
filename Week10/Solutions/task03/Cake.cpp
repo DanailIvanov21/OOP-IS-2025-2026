@@ -19,7 +19,6 @@ Cake& Cake::operator/=(int n) {
         throw std::invalid_argument("Invalid number of pieces");
 
     if (pieces == 0) {
-        // first division
         pieces = n;
         return *this;
     }
