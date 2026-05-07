@@ -24,7 +24,6 @@ Cake& Cake::operator/=(int n) {
         return *this;
     }
 
-    // next divisions must be multiples
     if (n % pieces != 0)
         throw std::invalid_argument("New division must be multiple of previous");
 
