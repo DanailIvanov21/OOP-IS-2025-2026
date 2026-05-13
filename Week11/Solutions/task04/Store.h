@@ -12,7 +12,7 @@ private:
 
     void freeDynamic();
     void copyDynamic(const Store& other);
-    void resize(); // Увеличава капацитета
+    void resize();
 
 public:
     Store(double initialBudget);
