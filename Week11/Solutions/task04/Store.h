@@ -6,11 +6,13 @@ class Store {
 private:
     Phone** items;
     size_t size;
+    size_t capacity;
     const double budget;   
     double usedBudget;
 
     void freeDynamic();
     void copyDynamic(const Store& other);
+    void resize(); // Увеличава капацитета
 
 public:
     Store(double initialBudget);
@@ -18,7 +20,7 @@ public:
     Store& operator=(const Store& other);
     ~Store();
 
-    bool add(Phone* p);  
+    bool add(Phone* p);
     bool remove(const MyString& brand, const MyString& model);
 
     void print() const;
