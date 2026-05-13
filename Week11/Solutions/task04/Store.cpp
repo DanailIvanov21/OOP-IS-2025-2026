@@ -5,21 +5,39 @@ void Store::freeDynamic() {
     for (size_t i = 0; i < size; i++)
         delete items[i];
     delete[] items;
+    items = nullptr;
+    size = 0;
+    capacity = 0;
 }
 
 void Store::copyDynamic(const Store& other) {
-    items = new Phone*[other.size];
+    items = new Phone*[other.capacity];
     for (size_t i = 0; i < other.size; i++)
         items[i] = other.items[i]; 
+
     size = other.size;
+    capacity = other.capacity;
     usedBudget = other.usedBudget;
 }
 
+void Store::resize() {
+    size_t newCap = (capacity == 0 ? 2 : capacity * 2);
+    Phone** newArr = new Phone*[newCap];
+
+    for (size_t i = 0; i < size; i++)
+        newArr[i] = items[i];
+
+    delete[] items;
+    items = newArr;
+    capacity = newCap;
+}
+
 Store::Store(double initialBudget)
-    : items(nullptr), size(0), budget(initialBudget), usedBudget(0) {}
+    : items(nullptr), size(0), capacity(0),
+      budget(initialBudget), usedBudget(0) {}
 
 Store::Store(const Store& other)
-    : items(nullptr), size(0), budget(other.budget) {
+    : items(nullptr), size(0), capacity(0), budget(other.budget) {
     copyDynamic(other);
 }
 
@@ -40,14 +58,10 @@ bool Store::add(Phone* p) {
     if (usedBudget + price > budget)
         return false;
 
-    Phone** newArr = new Phone*[size + 1];
-    for (size_t i = 0; i < size; i++)
-        newArr[i] = items[i];
-    newArr[size] = p;
+    if (size == capacity)
+        resize();
 
-    delete[] items;
-    items = newArr;
-    size++;
+    items[size++] = p;
     usedBudget += price;
     return true;
 }
