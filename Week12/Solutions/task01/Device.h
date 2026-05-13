@@ -7,8 +7,8 @@ protected:
     char* brand;
     int price;
 
-    void copyFrom(const Device& other);
-    void free();
+    void copyDynamic(const Device& other);
+    void freeDynamic();
 
 public:
     Device();
