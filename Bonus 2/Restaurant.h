@@ -10,9 +10,10 @@ private:
 
     void freeDynamic();
     void copyDynamic(const Restaurant& other);
+    void resize();
 
 public:
-    Restaurant(const char* n, size_t cap);
+    Restaurant(const char* n, size_t cap = 8);
     Restaurant(const Restaurant& other);
     Restaurant& operator=(const Restaurant& other);
     ~Restaurant();
