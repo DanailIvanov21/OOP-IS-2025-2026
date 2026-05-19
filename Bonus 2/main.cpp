@@ -3,12 +3,12 @@
 
 int main() {
     Restaurant r1("Happy", 5);
-    r1.addProduct("pizza");
-    r1.addProduct("salad");
+    r1.addProduct(Product("pizza"));
+    r1.addProduct(Product("salad"));
 
     Restaurant r2("KFC", 5);
-    r2.addProduct("wings");
-    r2.addProduct("fries");
+    r2.addProduct(Product("wings"));
+    r2.addaddProduct(Product("fries"));
 
     Restaurant arr[2] = { r1, r2 };
 
@@ -18,6 +18,4 @@ int main() {
     fp.readOrder();
 
     fp.printOrders();
-
-    return 0;
 }
