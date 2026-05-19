@@ -12,11 +12,17 @@ private:
     size_t orderCap;
 
     void freeDynamic();
+    void copyDynamic(const Foodpanda& other);
     void resizeOrders();
 
+    bool orderExists(int id) const;
+
 public:
-    Foodpanda(Restaurant* arr, size_t count, size_t orderCap);
+    Foodpanda(Restaurant* arr, size_t count, size_t cap);
+    Foodpanda(const Foodpanda& other);
+    Foodpanda& operator=(const Foodpanda& other);
     ~Foodpanda();
 
     void readOrder();
     void printOrders() const;
+};
