@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 
 class Product {
 private:
@@ -16,3 +15,4 @@ public:
 
     const char* getName() const;
 };
+
