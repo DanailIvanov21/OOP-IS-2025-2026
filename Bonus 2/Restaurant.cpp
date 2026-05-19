@@ -22,6 +22,18 @@ void Restaurant::copyDynamic(const Restaurant& other) {
     strcpy(name, other.name);
 }
 
+void Restaurant::resize() {
+    size_t newCap = capacity * 2;
+    Product* newArr = new Product[newCap];
+
+    for (size_t i = 0; i < size; i++)
+        newArr[i] = products[i];
+
+    delete[] products;
+    products = newArr;
+    capacity = newCap;
+}
+
 Restaurant::Restaurant(const char* n, size_t cap)
     : products(nullptr), size(0), capacity(cap) {
     strncpy(name, n, 24);
@@ -51,7 +63,7 @@ const char* Restaurant::getName() const {
 
 void Restaurant::addProduct(const Product& p) {
     if (size == capacity)
-        throw std::runtime_error("Restaurant product list full");
+        resize();
 
     products[size++] = p;
 }
