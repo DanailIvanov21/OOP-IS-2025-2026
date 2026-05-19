@@ -6,11 +6,6 @@ void Foodpanda::freeDynamic() {
     for (size_t i = 0; i < orderCount; i++)
         delete orders[i];
     delete[] orders;
-
-    restaurants = nullptr;
-    orders = nullptr;
-    orderCount = 0;
-    orderCap = 0;
 }
 
 void Foodpanda::copyDynamic(const Foodpanda& other) {
@@ -21,7 +16,11 @@ void Foodpanda::copyDynamic(const Foodpanda& other) {
 
     try {
         for (; i < other.orderCount; i++)
-            newArr[i] = new Order(*other.orders[i]);
+            newArr[i] = new Order(
+                other.orders[i]->getRestaurantName(),
+                other.orders[i]->getProducts(),
+                other.orders[i]->getCount()
+            );
     } catch (...) {
         for (size_t j = 0; j < i; j++)
             delete newArr[j];
@@ -33,7 +32,6 @@ void Foodpanda::copyDynamic(const Foodpanda& other) {
     orders = newArr;
     orderCount = other.orderCount;
     orderCap = other.orderCap;
-    nextID = other.nextID;
 }
 
 void Foodpanda::resizeOrders() {
@@ -50,11 +48,11 @@ void Foodpanda::resizeOrders() {
 
 Foodpanda::Foodpanda(Restaurant* arr, size_t count, size_t cap)
     : restaurants(arr), restCount(count),
-      orders(new Order*[cap]), orderCount(0), orderCap(cap), nextID(1) {}
+      orders(new Order*[cap]), orderCount(0), orderCap(cap) {}
 
 Foodpanda::Foodpanda(const Foodpanda& other)
     : restaurants(nullptr), orders(nullptr),
-      restCount(other.restCount), orderCount(0), orderCap(0), nextID(1) {
+      restCount(other.restCount), orderCount(0), orderCap(0) {
     copyDynamic(other);
 }
 
@@ -68,59 +66,58 @@ Foodpanda::~Foodpanda() {
     freeDynamic();
 }
 
+bool Foodpanda::orderExists(int id) const {
+    for (size_t i = 0; i < orderCount; i++)
+        if (orders[i]->getID() == id)
+            return true;
+    return false;
+}
+
 void Foodpanda::readOrder() {
     char restName[50];
-    size_t count;
+    size_t cnt;
 
     std::cout << "Restaurant name: ";
     std::cin >> restName;
 
     std::cout << "Number of products: ";
-    std::cin >> count;
+    std::cin >> cnt;
 
-    char** prods = new char*[count];
-    for (size_t i = 0; i < count; i++) {
+    Product* prods = new Product[cnt];
+    for (size_t i = 0; i < cnt; i++) {
         char buff[50];
         std::cout << "Product " << i + 1 << ": ";
         std::cin >> buff;
-
-        prods[i] = new char[strlen(buff) + 1];
-        strcpy(prods[i], buff);
+        prods[i] = Product(buff);
     }
 
-    bool exists = false;
+    int currentID = Order::getNextID();
+
     Restaurant* target = nullptr;
-
     for (size_t i = 0; i < restCount; i++)
-        if (strcmp(restaurants[i].getName(), restName) == 0) {
-            exists = true;
+        if (strcmp(restaurants[i].getName(), restName) == 0)
             target = &restaurants[i];
-            break;
-        }
 
-    if (!exists) {
+    if (!target) {
         std::cout << "Invalid order: restaurant does not exist\n";
-        nextID++;
-        for (size_t i = 0; i < count; i++) delete[] prods[i];
+        Order::incrementID();
         delete[] prods;
         return;
     }
 
-    for (size_t i = 0; i < orderCount; i++)
-        if (strcmp(orders[i]->getRestaurantName(), restName) == 0 &&
-            orders[i]->getID() == nextID) {
-            std::cout << "Invalid order: duplicate ID\n";
-            nextID++;
-            return;
-        }
+    if (orderExists(currentID)) {
+        std::cout << "Invalid order: duplicate ID\n";
+        Order::incrementID();
+        delete[] prods;
+        return;
+    }
 
     try {
-        int time = target->processOrder(prods, count);
+        int time = target->processOrder(prods, cnt);
         std::cout << "Delivery time: " << time << " minutes\n";
     } catch (...) {
         std::cout << "Restaurant does not offer some product\n";
-        nextID++;
-        for (size_t i = 0; i < count; i++) delete[] prods[i];
+        Order::incrementID();
         delete[] prods;
         return;
     }
@@ -128,15 +125,13 @@ void Foodpanda::readOrder() {
     if (orderCount == orderCap)
         resizeOrders();
 
-    orders[orderCount++] = new Order(restName, nextID, prods, count);
-    nextID++;
+    orders[orderCount++] = new Order(restName, prods, cnt);
 
-    for (size_t i = 0; i < count; i++) delete[] prods[i];
     delete[] prods;
 }
 
 void Foodpanda::printOrders() const {
     for (size_t i = 0; i < orderCount; i++)
-        std::cout << orders[i]->getRestaurantName()
-                  << " | ID: " << orders[i]->getID() << "\n";
+        std::cout << "Order ID: " << orders[i]->getID()
+                  << " | Restaurant: " << orders[i]->getRestaurantName() << "\n";
 }
