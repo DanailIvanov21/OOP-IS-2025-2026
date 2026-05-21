@@ -187,9 +187,7 @@ private:
     }
 
 public:
-    Bachelor(const char* name,
-              T fn,
-              const char* speciality)
+    Bachelor(const char* name, T fn, const char* speciality)
         : Student<T>(name, fn)
     {
         copyFrom(speciality);
@@ -261,9 +259,7 @@ private:
     }
 
 public:
-    Master(const char* name,
-           T fn,
-           const char* thesis)
+    Master(const char* name, T fn, const char* thesis)
         : Student<T>(name, fn)
     {
         copyFrom(thesis);
