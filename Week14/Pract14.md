@@ -100,15 +100,435 @@ int main()
 - да имаме полиморфизъм чрез виртуални функции.
 
 Пример:
+
+Student.hpp
 ```c++
+#pragma once
+#include <iostream>
+#include <cstring>
+
+template<typename T>
+class Student
+{
+protected:
+    char* name;
+    T fn;
+
+    void copyFrom(const Student<T>& other)
+    {
+        name = new char[strlen(other.name) + 1];
+        strcpy(name, other.name);
+
+        fn = other.fn;
+    }
+
+    void free()
+    {
+        delete[] name;
+    }
+
+public:
+    Student(const char* name = "", T fn = T())
+    {
+        this->name = new char[strlen(name) + 1];
+        strcpy(this->name, name);
+
+        this->fn = fn;
+    }
+
+    Student(const Student<T>& other)
+    {
+        copyFrom(other);
+    }
+
+    Student<T>& operator=(const Student<T>& other)
+    {
+        if (this != &other)
+        {
+            free();
+            copyFrom(other);
+        }
+
+        return *this;
+    }
+
+    virtual ~Student()
+    {
+        free();
+    }
+
+    virtual void print() const = 0;
+
+    virtual Student<T>* clone() const = 0;
+};
 
 ```
+
+Bachelor.hpp
 ```c++
+#pragma once
+#include "Student.hpp"
+
+template<typename T>
+class Bachelor : public Student<T>
+{
+private:
+    char* speciality;
+
+    void copySpeciality(const char* speciality)
+    {
+        this->speciality = new char[strlen(speciality) + 1];
+        strcpy(this->speciality, speciality);
+    }
+
+    void freeSpeciality()
+    {
+        delete[] speciality;
+    }
+
+public:
+    Bachelor(const char* name,
+              T fn,
+              const char* speciality)
+        : Student<T>(name, fn)
+    {
+        copySpeciality(speciality);
+    }
+
+    Bachelor(const Bachelor<T>& other)
+        : Student<T>(other)
+    {
+        copySpeciality(other.speciality);
+    }
+
+    Bachelor<T>& operator=(const Bachelor<T>& other)
+    {
+        if (this != &other)
+        {
+            Student<T>::operator=(other);
+
+            freeSpeciality();
+            copySpeciality(other.speciality);
+        }
+
+        return *this;
+    }
+
+    ~Bachelor() override
+    {
+        freeSpeciality();
+    }
+
+    void print() const override
+    {
+        std::cout << "Bachelor -> ";
+
+        std::cout << "Name: "
+                  << this->name
+                  << " FN: "
+                  << this->fn
+                  << " Speciality: "
+                  << speciality
+                  << std::endl;
+    }
+
+    Student<T>* clone() const override
+    {
+        return new Bachelor<T>(*this);
+    }
+};
 ```
+Master.hpp
 ```c++
+#pragma once
+#include "Student.hpp"
+
+template<typename T>
+class Master : public Student<T>
+{
+private:
+    char* thesis;
+
+    void copyThesis(const char* thesis)
+    {
+        this->thesis = new char[strlen(thesis) + 1];
+        strcpy(this->thesis, thesis);
+    }
+
+    void freeThesis()
+    {
+        delete[] thesis;
+    }
+
+public:
+    Master(const char* name,
+           T fn,
+           const char* thesis)
+        : Student<T>(name, fn)
+    {
+        copyThesis(thesis);
+    }
+
+    Master(const Master<T>& other)
+        : Student<T>(other)
+    {
+        copyThesis(other.thesis);
+    }
+
+    Master<T>& operator=(const Master<T>& other)
+    {
+        if (this != &other)
+        {
+            Student<T>::operator=(other);
+
+            freeThesis();
+            copyThesis(other.thesis);
+        }
+
+        return *this;
+    }
+
+    ~Master() override
+    {
+        freeThesis();
+    }
+
+    void print() const override
+    {
+        std::cout << "Master -> ";
+
+        std::cout << "Name: "
+                  << this->name
+                  << " FN: "
+                  << this->fn
+                  << " Thesis: "
+                  << thesis
+                  << std::endl;
+    }
+
+    Student<T>* clone() const override
+    {
+        return new Master<T>(*this);
+    }
+};
 ```
+University.hpp
 ```c++
+#pragma once
+#include "Bachelor.hpp"
+#include "Master.hpp"
+
+template<typename T>
+class University
+{
+private:
+    Student<T>** students;
+
+    size_t size;
+    size_t capacity;
+
+    void copyFrom(const University<T>& other)
+    {
+        size = other.size;
+        capacity = other.capacity;
+
+        students = new Student<T>*[capacity];
+
+        for (size_t i = 0; i < size; i++)
+        {
+            students[i] = other.students[i]->clone();
+        }
+    }
+
+    void free()
+    {
+        for (size_t i = 0; i < size; i++)
+        {
+            delete students[i];
+        }
+
+        delete[] students;
+    }
+
+    void resize()
+    {
+        capacity *= 2;
+
+        Student<T>** newStudents =
+            new Student<T>*[capacity];
+
+        for (size_t i = 0; i < size; i++)
+        {
+            newStudents[i] = students[i];
+        }
+
+        delete[] students;
+
+        students = newStudents;
+    }
+
+public:
+    University()
+    {
+        size = 0;
+        capacity = 4;
+
+        students = new Student<T>*[capacity];
+    }
+
+    University(const University<T>& other)
+    {
+        copyFrom(other);
+    }
+
+    University<T>& operator=(
+        const University<T>& other)
+    {
+        if (this != &other)
+        {
+            free();
+            copyFrom(other);
+        }
+
+        return *this;
+    }
+
+    ~University()
+    {
+        free();
+    }
+
+    void addStudent(const Student<T>& student)
+    {
+        if (size >= capacity)
+        {
+            resize();
+        }
+
+        students[size++] = student.clone();
+    }
+
+    void print() const
+    {
+        for (size_t i = 0; i < size; i++)
+        {
+            students[i]->print();
+        }
+    }
+};
 ```
+
+main.cpp
+```c++
+#include "University.hpp"
+
+int main()
+{
+    Bachelor<int> b1(
+        "Ivan",
+        1001,
+        "Computer Science"
+    );
+
+    Bachelor<int> b2(
+        "Maria",
+        1002,
+        "Software Engineering"
+    );
+
+    Master<int> m1(
+        "Georgi",
+        2001,
+        "Artificial Intelligence"
+    );
+
+    University<int> uni;
+
+    uni.addStudent(b1);
+    uni.addStudent(b2);
+    uni.addStudent(m1);
+
+    uni.print();
+
+    return 0;
+}
+```
+
+## Нетипови шаблонни параметри 
+
+Това са шаблонни параметри, които НЕ са типове, а стойности.
+
+template<int N> - Тук N е число.
+
+Пример
+
+Array.hpp
+```c++
+pragma once
+
+#include <iostream>
+
+template<typename T, size_t N>
+
+class Array
+
+{
+
+private:
+
+    T data[N];
+
+public:
+
+    void fill(const T& value)
+
+    {
+
+        for (size_t i = 0; i < N; i++)
+
+        {
+
+            data[i] = value;
+
+        }
+
+    }
+
+    void print() const
+
+    {
+
+        for (size_t i = 0; i < N; i++)
+
+        {
+
+            std::cout << data[i] << ' ';
+
+        }
+
+        std::cout << std::endl;
+
+    }
+
+};
+
+#include "Array.hpp"
+
+int main()
+{
+    Array<int, 5> arr;
+
+    arr.fill(7);
+
+    arr.print();
+
+    return 0;
+}
+```
+
+Нетиповите шаблонни параметри са параметри на шаблон, които представляват стойности, а не типове. 
+Най-често са числа, указатели или constexpr стойности. Използват се, когато искаме дадена информация 
+да е известна още по време на компилация.
 
 ## Задачи
 
