@@ -573,7 +573,16 @@ int main()
 
 Ако r = r1 * r2, то r.subject = r1.subject, r.object = r2.object
 
+Тоест r1.object == r2.subject
+
 Пример: (r1*r2).print(): 
 
 2 is smaller than 6, which is divisible by 3 
 Композицията се допуска само ако r1.object == r2.subject, в противен случай резултатът e r1.
+
+Пример за невалидна композиция:
+
+Relation<int> r1(2, 6, "is smaller than");
+Relation<int> r2(7, 3, "is divisible by");
+
+6 != 7 и връща r1.
