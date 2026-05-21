@@ -175,13 +175,13 @@ class Bachelor : public Student<T>
 private:
     char* speciality;
 
-    void copySpeciality(const char* speciality)
+    void copyFrom(const char* speciality)
     {
         this->speciality = new char[strlen(speciality) + 1];
         strcpy(this->speciality, speciality);
     }
 
-    void freeSpeciality()
+    void free()
     {
         delete[] speciality;
     }
@@ -192,13 +192,13 @@ public:
               const char* speciality)
         : Student<T>(name, fn)
     {
-        copySpeciality(speciality);
+        copyFrom(speciality);
     }
 
     Bachelor(const Bachelor<T>& other)
         : Student<T>(other)
     {
-        copySpeciality(other.speciality);
+        copyFrom(other.speciality);
     }
 
     Bachelor<T>& operator=(const Bachelor<T>& other)
@@ -207,16 +207,16 @@ public:
         {
             Student<T>::operator=(other);
 
-            freeSpeciality();
-            copySpeciality(other.speciality);
+            free();
+            copyFrom(other.speciality);
         }
 
         return *this;
     }
 
-    ~Bachelor() override
+    ~Bachelor() 
     {
-        freeSpeciality();
+        free();
     }
 
     void print() const override
@@ -249,13 +249,13 @@ class Master : public Student<T>
 private:
     char* thesis;
 
-    void copyThesis(const char* thesis)
+    void copyFrom(const char* thesis)
     {
         this->thesis = new char[strlen(thesis) + 1];
         strcpy(this->thesis, thesis);
     }
 
-    void freeThesis()
+    void free()
     {
         delete[] thesis;
     }
@@ -266,13 +266,13 @@ public:
            const char* thesis)
         : Student<T>(name, fn)
     {
-        copyThesis(thesis);
+        copyFrom(thesis);
     }
 
     Master(const Master<T>& other)
         : Student<T>(other)
     {
-        copyThesis(other.thesis);
+        copyFrom(other.thesis);
     }
 
     Master<T>& operator=(const Master<T>& other)
@@ -281,14 +281,14 @@ public:
         {
             Student<T>::operator=(other);
 
-            freeThesis();
-            copyThesis(other.thesis);
+            free();
+            copyFrom(other.thesis);
         }
 
         return *this;
     }
 
-    ~Master() override
+    ~Master() 
     {
         freeThesis();
     }
