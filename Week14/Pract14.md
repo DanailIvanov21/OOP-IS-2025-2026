@@ -350,8 +350,7 @@ private:
     {
         capacity *= 2;
 
-        Student<T>** newStudents =
-            new Student<T>*[capacity];
+        Student<T>** newStudents =  new Student<T>*[capacity];
 
         for (size_t i = 0; i < size; i++)
         {
@@ -377,8 +376,7 @@ public:
         copyFrom(other);
     }
 
-    University<T>& operator=(
-        const University<T>& other)
+    University<T>& operator=(const University<T>& other)
     {
         if (this != &other)
         {
@@ -420,23 +418,11 @@ main.cpp
 
 int main()
 {
-    Bachelor<int> b1(
-        "Ivan",
-        1001,
-        "Computer Science"
-    );
+    Bachelor<int> b1( "Ivan",  1001, "Computer Science");
 
-    Bachelor<int> b2(
-        "Maria",
-        1002,
-        "Software Engineering"
-    );
+    Bachelor<int> b2( "Maria", 1002, "Software Engineering" );
 
-    Master<int> m1(
-        "Georgi",
-        2001,
-        "Artificial Intelligence"
-    );
+    Master<int> m1( "Georgi", 2001, "Artificial Intelligence");
 
     University<int> uni;
 
