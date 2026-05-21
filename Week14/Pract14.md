@@ -563,26 +563,40 @@ int main()
 Да се дефинира шаблон на клас Relation<Т>, който съдържа два обекта от тип T, наречени subject и object, и низ с произволна дължина relation,
 описващ връзката между тези обекти. 
 
-Пример: Relation<int> r1(2,6,“is smaller than”),r2(6,3,“is divisible by”); 
+
+Пример:
+```c++
+Relation<int> r1(2,6,“is smaller than”),r2(6,3,“is divisible by”); 
+```
 
 За шаблона да се реализират голямата четворка и операция за отпечатване void print().
 
-Пример: r1.print(): 2 is smaller than 6. 
+Пример: 
+```c++
+r1.print(): 2 is smaller than 6. 
+```
 
 За инстанцията на шаблона Relation<int> реализирайте и оператор за композиция * по следния начин.
 
+```c++
 Ако r = r1 * r2, то r.subject = r1.subject, r.object = r2.object
 
 Тоест r1.object == r2.subject
+```
 
-Пример: (r1*r2).print(): 
+Пример: 
+
+```c++
+(r1*r2).print(): 
 
 2 is smaller than 6, which is divisible by 3 
 Композицията се допуска само ако r1.object == r2.subject, в противен случай резултатът e r1.
+```
 
 Пример за невалидна композиция:
-
+```c++
 Relation<int> r1(2, 6, "is smaller than");
 Relation<int> r2(7, 3, "is divisible by");
 
 6 != 7 и връща r1.
+```
